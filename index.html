@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Namrata Dutt</title>
+  <meta name="description" content="Namrata Dutt, PhD Candidate, Agricultural and Biological Engineering, University of Florida. RGB-D computer vision for crop detection, tracking, and maturity assessment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #2f5233;   /* forest green (headings, buttons) */
+      --ink: #2b2a24;
+      --muted: #6b6858;
+      --rule: #dcd5c2;
+      --tint: #efe8d6;
+      --link: #3e6e41;
+      --bg: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+      font-size: 1.0625rem;
+      line-height: 1.65;
+    }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 1.5rem; }
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+    h1, h2, h3, nav, .meta, .btn, .year, .tag, footer {
+      font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Header */
+    header { padding: 3.5rem 0 2rem; border-bottom: 1px solid var(--rule); }
+    .intro { display: grid; grid-template-columns: 230px 1fr 400px; gap: 2.5rem; align-items: center; }
+    .photo { width: 230px; height: 230px; border-radius: 50%; object-fit: cover; background: var(--tint); }
+    h1 { color: var(--navy); font-size: 2.8rem; font-weight: 600; margin: 0 0 .4rem; line-height: 1.2; }
+    .role { margin: 0 0 .9rem; font-size: 1.15rem; line-height: 1.5; }
+    .meta { font-size: 1.05rem; color: var(--muted); margin: 0 0 1rem; }
+    .links { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .btn {
+      font-size: 1rem; font-weight: 500; padding: .45rem 1rem;
+      border: 1px solid var(--navy); border-radius: 4px; color: var(--navy);
+    }
+    .btn:hover { background: var(--navy); color: var(--bg); text-decoration: none; }
+
+    /* Point-cloud mushroom */
+    header .wrap { max-width: 1180px; }
+    .specimen { margin: 0 -1rem 0 0; text-align: center; justify-self: end; }
+    #mushroom { width: 400px; height: 400px; display: block; cursor: grab; touch-action: none; }
+    #mushroom.dragging { cursor: grabbing; }
+    .specimen figcaption { font-family: "IBM Plex Sans", Arial, sans-serif; font-size: .9rem; color: var(--muted); }
+    #stage { color: var(--navy); font-weight: 600; }
+
+    /* Nav */
+    nav { position: sticky; top: 0; z-index: 5; background: rgba(255,255,255,.96); border-bottom: 1px solid var(--rule); }
+    nav ul { list-style: none; margin: 0 auto; padding: .7rem 1.5rem; max-width: 1040px;
+             display: flex; flex-wrap: wrap; gap: 1.6rem; font-size: 1.05rem; }
+    nav a { color: var(--navy); font-weight: 500; }
+
+    /* Sections */
+    section { padding: 2.5rem 0 1rem; scroll-margin-top: 3.5rem; }
+    h2 { color: var(--navy); font-size: 2rem; font-weight: 600; margin: 0 0 1.2rem; }
+    h3 { color: var(--navy); font-size: 1.35rem; font-weight: 600; margin: 0 0 .3rem; }
+    h4 { font-family: "IBM Plex Sans", Arial, sans-serif; font-size: 1.2rem; font-weight: 600;
+         color: var(--muted); margin: 1.8rem 0 .4rem; }
+    p { margin: 0 0 1rem; max-width: 72ch; }
+
+    .project { display: grid; grid-template-columns: 240px 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .project img { width: 100%; border: 1px solid var(--rule); border-radius: 4px; background: var(--tint); }
+    .tag { font-size: .8rem; color: var(--muted); }
+
+    .pubs { list-style: none; padding: 0; margin: 0; }
+    .pubs li { display: grid; grid-template-columns: 4rem 1fr; gap: 1rem; padding: .9rem 0; border-top: 1px solid var(--rule); }
+    .year { color: var(--navy); font-weight: 600; font-size: .9rem; padding-top: .15rem; }
+    .venue { font-style: italic; }
+    .badge { font-family: "IBM Plex Sans", Arial, sans-serif; font-size: .75rem; font-weight: 600;
+             color: var(--navy); border: 1px solid var(--navy); border-radius: 3px; padding: 0 .35rem; margin-left: .3rem; }
+
+    .hrm { display: grid; grid-template-columns: 1fr 360px; gap: 2.5rem; align-items: center; }
+    .hrm figure { margin: 0; text-align: center; }
+    #strawberry { width: 360px; height: 360px; display: block; cursor: grab; touch-action: none; }
+    #strawberry.dragging { cursor: grabbing; }
+    .hrm figcaption { font-family: "IBM Plex Sans", Arial, sans-serif; font-size: .9rem; color: var(--muted); }
+
+    .entry { margin-bottom: 1.4rem; }
+    .item { display: grid; grid-template-columns: 1fr auto; gap: 1.5rem; align-items: baseline; }
+    .item .tag { white-space: nowrap; text-align: right; font-size: .95rem; }
+    .entry p { margin-top: .2rem; }
+
+    .plain { padding-left: 1.2rem; margin: 0 0 1rem; }
+    .plain li { margin-bottom: .45rem; }
+
+    footer { margin-top: 2rem; padding: 1.5rem 0 3rem; border-top: 1px solid var(--rule); font-size: .8rem; color: var(--muted); }
+
+    @media (max-width: 640px) {
+      .intro { grid-template-columns: 1fr; }
+      .photo { width: 170px; height: 170px; }
+      .specimen { justify-self: center; margin: 0; }
+      #mushroom { width: 280px; height: 280px; margin: 0 auto; }
+      h1 { font-size: 2.2rem; }
+      .project { grid-template-columns: 1fr; }
+      .pubs li { grid-template-columns: 1fr; gap: .2rem; }
+      .hrm { grid-template-columns: 1fr; }
+      #strawberry { width: 260px; height: 260px; margin: 0 auto; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="intro">
+      <!-- Put your photo at images/profile.jpg -->
+      <img class="photo" src="images/profile.jpg" alt="Namrata Dutt" onerror="this.style.visibility='hidden'">
+      <div>
+        <h1>Namrata Dutt</h1>
+        <p class="role">PhD Candidate<br>Agricultural and Biological Engineering<br>University of Florida, Gulf Coast Research and Education Center</p>
+        <p class="meta">namratadutt2 [at] gmail [dot] com</p>
+        <div class="links">
+          <a class="btn" href="files/CV_NamrataDutt.pdf">CV</a>
+          <a class="btn" href="mailto:namratadutt2@gmail.com">Email</a>
+          <a class="btn" href="https://github.com/namratadutt">GitHub</a>
+          <a class="btn" href="https://www.linkedin.com/in/namratadutt">LinkedIn</a>
+          <!-- Add Google Scholar when ready:
+          <a class="btn" href="https://scholar.google.com/citations?user=YOUR-ID">Google Scholar</a> -->
+        </div>
+      </div>
+      <figure class="specimen">
+        <canvas id="mushroom" aria-label="Rotating 3D point cloud of a mushroom growing from immature to veil open. Drag to turn it."></canvas>
+        <figcaption>Stage: <span id="stage">immature</span><br>Drag to turn it</figcaption>
+      </figure>
+    </div>
+
+  </div>
+</header>
+
+<nav aria-label="Sections">
+  <ul>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#hrm">Additional Projects</a></li>
+    <li><a href="#publications">Publications</a></li>
+    <li><a href="#presentations">Presentations</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#outreach">Outreach</a></li>
+    <li><a href="#service">Service</a></li>
+  </ul>
+</nav>
+
+<main class="wrap">
+
+  <section id="about" aria-label="About">
+    <p>I develop computer vision and machine learning methods that use color and depth (RGB-D) imaging to detect, track, and assess the maturity of individual crops, supporting robotic harvesting and crop monitoring. My current work focuses on white button mushrooms (<i>Agaricus bisporus</i>).</p>
+    <p>I am a PhD candidate in Agricultural and Biological Engineering at the University of Florida, based at the Gulf Coast Research and Education Center in Wimauma, Florida, advised by Dr. Daeun Choi. I received an M.S. in Computer Science from UF in 2022 and a B.Tech. in Computer Science from Banasthali Vidyapith in 2021.</p>
+  </section>
+
+  <section id="research">
+    <h2>Research</h2>
+
+    <div class="project">
+      <!-- Figure: images/fig-rdguidenet.png -->
+      <img src="images/fig-rdguidenet.png" alt="RD-GuideNet detection, segmentation, and tracking of mushrooms in a growing bed">
+      <div>
+        <h3>Depth-guided detection, segmentation, and tracking</h3>
+        <p>RD-GuideNet uses depth to guide detection, instance segmentation, and temporal tracking of individual mushrooms in dense beds, reaching an F1-score of 0.93 for segmentation and 92.7% tracking consistency.</p>
+        <span class="tag">Sensors 2026, Editor’s Choice</span>
+      </div>
+    </div>
+
+    <div class="project">
+      <!-- Figure: images/fig-maturity.png -->
+      <img src="images/fig-maturity.png" alt="Mushroom maturity estimation from depth and growth features">
+      <div>
+        <h3>Maturity estimation and time-to-harvest prediction</h3>
+        <p>A two-stage framework that estimates maturity from mushroom geometry, depth, and temporal growth features (MAE of 5.77), then predicts time to harvest. Ongoing work examines how crowding affects growth.</p>
+        <span class="tag">ASABE 2024, 2026</span>
+      </div>
+    </div>
+
+    <div class="project">
+      <!-- Figure: images/fig-dataset.png -->
+      <img src="images/fig-dataset.png" alt="Sample frames from the RGB-D mushroom growth time-series dataset">
+      <div>
+        <h3>RGB-D time-series dataset of mushroom growth</h3>
+        <p>A longitudinal RGB-D dataset of white button mushroom growth with instance annotations, collected with a linear-rail imaging system and released publicly for segmentation research.</p>
+        <span class="tag">Data in Brief 2026, <a href="https://doi.org/10.17632/8n6nr43gk3.1">Mendeley Data</a></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="hrm">
+    <h2>Additional Projects</h2>
+    <div class="hrm">
+      <div>
+        <h3>Strawberry Genotyping from HRM Curves</h3>
+        <p>High-resolution melting (HRM) analysis tracks how DNA separates as it is heated, producing a melt curve that differs by genotype. Calling genotypes from these curves is usually done by eye, which is slow and can vary between people.</p>
+        <p>With the strawberry genetics team, I developed deep learning models (a residual LSTM, with logistic regression as a second check) that classify genotypes directly from melt curves across six DNA markers. The work included automatic flagging of failed wells and a simple app so the team can run the models on new plates.</p>
+      </div>
+      <figure>
+        <canvas id="strawberry" aria-label="Animation: a point-cloud strawberry rearranges into a DNA double helix, the helix melts, and the points form melting-peak curves for three genotype groups. Drag to turn it."></canvas>
+        <figcaption><span id="hrmStage" style="color: var(--navy); font-weight: 600;">strawberry</span><br>Drag to turn it</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="publications">
+    <h2>Publications</h2>
+
+    <h4>Journal articles</h4>
+    <ul class="pubs">
+      <li>
+        <span class="year">2026</span>
+        <div>RD-GuideNet: A depth-guided framework for robust detection, segmentation, and temporal tracking of white button mushrooms. <b>N. Dutt</b>, D. Choi, Y. Ampatzidis, W. S. Lee, S. J. Koppal, X. Wang. <span class="venue">Sensors</span>, 26(6), 1935. <span class="badge">Editor’s Choice</span> <a href="https://doi.org/10.3390/s26061935">Paper</a></div>
+      </li>
+      <li>
+        <span class="year">2026</span>
+        <div>An RGB-D time-series dataset of white button mushroom growth for instance segmentation. <b>N. Dutt</b>, D. Choi. <span class="venue">Data in Brief</span>, 68, 113085. <a href="https://doi.org/10.1016/j.dib.2026.113085">Paper</a></div>
+      </li>
+    </ul>
+
+    <h4>Conference paper</h4>
+    <ul class="pubs">
+      <li>
+        <span class="year">2024</span>
+        <div>A computer vision system for mushroom detection and maturity estimation using depth images. <b>N. Dutt</b>, D. Choi. <span class="venue">ASABE Annual International Meeting</span>.</div>
+      </li>
+    </ul>
+
+    <h4>Extension article</h4>
+    <ul class="pubs">
+      <li>
+        <span class="year">2025</span>
+        <div>How AI can analyze images: An introductory case study using mushroom detection. <b>N. Dutt</b>, D. Choi. <span class="venue">EDIS</span>, 2025(6). <a href="https://doi.org/10.32473/edis-ae614-2025">Article</a></div>
+      </li>
+    </ul>
+
+    <h4>Dataset</h4>
+    <ul class="pubs">
+      <li>
+        <span class="year">2026</span>
+        <div>RGB-D time-series dataset of white button mushroom growth for instance segmentation (Version 1). <b>N. Dutt</b>, D. Choi, J. Pecchia. <span class="venue">Mendeley Data</span>. <a href="https://doi.org/10.17632/8n6nr43gk3.1">Dataset</a></div>
+      </li>
+    </ul>
+  </section>
+
+  <section id="presentations">
+    <h2>Presentations</h2>
+
+    <h4>Oral</h4>
+    <ul class="pubs">
+      <li><span class="year">2026</span><div>From prediction to harvest: AI-driven mushroom maturity estimation and harvest scheduling. Lightning talk, UF AI Days, Gainesville, FL.</div></li>
+      <li><span class="year">2026</span><div>A two-stage framework for mushroom maturity estimation and time-to-harvest prediction using 3D depth data. ASABE Annual International Meeting, Indianapolis, IN.</div></li>
+      <li><span class="year">2025</span><div>3D point cloud reconstruction for automated mushroom segmentation and growth monitoring. ASABE Annual International Meeting, Toronto, Canada.</div></li>
+      <li><span class="year">2024</span><div>A computer vision system for mushroom detection and maturity estimation using depth images. ASABE Annual International Meeting, Anaheim, CA.</div></li>
+    </ul>
+
+    <h4>Poster</h4>
+    <ul class="pubs">
+      <li><span class="year">2026</span><div>A two-stage framework for mushroom maturity estimation and time-to-harvest prediction using 3D depth data. South Florida Student and Post-Doc Research Symposium, Homestead, FL.</div></li>
+      <li><span class="year">2025</span><div>An integrated approach for RGB-D acquisition, precision segmentation, and mushroom growth pattern analysis. South Florida Student and Post-Doc Research Symposium, Belle Glade, FL.</div></li>
+      <li><span class="year">2025</span><div>Precision mushroom farming: Detection and maturity estimation with depth imaging. UF Graduate Student Research Day, Gainesville, FL.</div></li>
+      <li><span class="year">2024</span><div>Automated mushroom detection and maturity estimation using depth images. UF Inter-REC Poster and Flash Talk Competition, Wimauma, FL.</div></li>
+    </ul>
+  </section>
+
+  <section id="experience">
+    <h2>Experience</h2>
+    <div class="entry">
+      <div class="item"><span><b>Graduate Research Assistant</b>, Gulf Coast Research and Education Center, UF (Dr. Daeun Choi)</span><span class="tag">2023 – present</span></div>
+      <p>RGB-D computer vision for mushroom detection, instance segmentation, localization, temporal tracking, and maturity assessment to support selective robotic harvesting.</p>
+    </div>
+    <div class="entry">
+      <div class="item"><span><b>Graduate Research Assistant</b>, Agricultural and Biological Engineering, UF (Dr. Aditya Singh)</span><span class="tag">2022</span></div>
+      <p>Deep learning for land-cover change detection, and UAV hyperspectral and LiDAR analysis for crop health assessment.</p>
+    </div>
+    <div class="entry">
+      <div class="item"><span><b>Image Processing Intern</b>, Instruments Research and Development Establishment, India</span><span class="tag">2020</span></div>
+      <p>Face detection and feature-based object tracking.</p>
+    </div>
+    <div class="entry">
+      <div class="item"><span><b>Software Development Intern</b>, Indian Institute of Technology Roorkee, India</span><span class="tag">2019</span></div>
+      <p>Particle swarm optimization and differential evolution for discrete and combinatorial problems.</p>
+    </div>
+  </section>
+
+  <section id="outreach">
+    <h2>Outreach &amp; Extension</h2>
+    <ul class="pubs">
+      <li><span class="year">2026</span><div>Can a computer tell a mushroom is ready to pick? Expanding Agriculture: Workforce Program, College of Central Florida, Lecanto, FL.</div></li>
+      <li><span class="year">2025</span><div>Mushroom detection and AI demonstration. UF/IFAS GCREC Centennial Celebration and AI Center Groundbreaking, Wimauma, FL.</div></li>
+      <li><span class="year">2025</span><div>Mushroom detection and AI demonstration for growers and industry. Florida Strawberry Growers Association Tailgate, Dover, FL.</div></li>
+      <li><span class="year">2025</span><div>Depth sensor and mushroom detection demonstration. UF/IFAS Range Cattle REC Youth Field Day, Ona, FL.</div></li>
+      <li><span class="year">2023–25</span><div>Research tours of the linear-rail mushroom imaging system at GCREC, including visits by Senator Collins, White House staff, the National Clean Plant Network, and Professor Elizabeth Sklar.</div></li>
+    </ul>
+  </section>
+
+  <section id="service">
+    <h2>Service &amp; Leadership</h2>
+    <ul class="plain">
+      <li><b>Reviewer:</b> Smart Agricultural Technology, Applied Engineering in Agriculture, Journal of the ASABE, IEEE Transactions on Computational Imaging</li>
+      <li><b>Abstract reviewer:</b> 2027 Florida Undergraduate Research Conference</li>
+      <li><b>Session moderator:</b> AI, Machine Vision, and Intelligent Sensing for Agricultural Systems, ASABE Annual International Meeting, 2026</li>
+      <li><b>Communication Chair:</b> Gulf Coast Postdoc and Student Association, UF/IFAS GCREC, 2025</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">Last updated November 2026</div>
+</footer>
+
+<script>
+// Colored point-cloud mushroom that grows through four maturity stages
+// (immature -> approaching maturity -> mature -> veil open).
+// Drag to rotate/tilt.
+(function () {
+  var canvas = document.getElementById('mushroom');
+  var stageEl = document.getElementById('stage');
+  if (!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function clamp(x, a, b) { return x < a ? a : x > b ? b : x; }
+
+  // Shape keyframes for the four stages (g = 0, 1/3, 2/3, 1)
+  var KEY = {
+    R:    [0.50, 0.72, 0.95, 1.10],   // cap radius
+    tm:   [2.45, 2.25, 1.95, 1.62],   // how far the cap wraps under (closed -> open)
+    ys:   [1.00, 0.98, 0.86, 0.60],   // cap height (round -> flatter)
+    sl:   [0.22, 0.42, 0.66, 0.90],   // visible stem length
+    sr:   [0.17, 0.22, 0.27, 0.29],   // stem radius
+    veil: [1.00, 1.00, 0.50, 0.00],   // fraction of veil still intact
+    gill: [0.00, 0.00, 0.35, 1.00],   // gill darkening (pink -> brown)
+    ring: [0.00, 0.00, 0.45, 1.00]    // torn veil collapsing into a ring on the stem
+  };
+  function key(name, g) {
+    var k = KEY[name], x = clamp(g, 0, 1) * 3, i = Math.min(2, Math.floor(x)), t = x - i;
+    t = t * t * (3 - 2 * t);
+    return lerp(k[i], k[i + 1], t);
+  }
+
+  // Build points: 0 cap, 1 stem, 2 veil, 3 gills
+  var NCAP = 6000, NSTEM = 2000, NBASE = 250, NVEIL = 1600, NG = 140, NGP = 40;
+  var N = NCAP + NSTEM + NBASE + NVEIL + NG * NGP;
+  var part = new Uint8Array(N), A = new Float32Array(N), B = new Float32Array(N),
+      RV = new Float32Array(N), JX = new Float32Array(N), JY = new Float32Array(N), JZ = new Float32Array(N),
+      CV = new Float32Array(N), GI = new Uint8Array(N);
+  var golden = Math.PI * (3 - Math.sqrt(5)), n = 0, i, k;
+  function add(p, a, b) {
+    part[n] = p; A[n] = a; B[n] = b; RV[n] = Math.random();
+    JX[n] = (Math.random() - 0.5) * 0.012; JY[n] = (Math.random() - 0.5) * 0.012; JZ[n] = (Math.random() - 0.5) * 0.012;
+    CV[n] = (Math.random() - 0.5) * 16; n++;
+  }
+  for (i = 0; i < NCAP; i++) add(0, (i + 0.5) / NCAP, i * golden);
+  for (i = 0; i < NSTEM; i++) add(1, Math.random(), Math.random() * Math.PI * 2);
+  for (i = 0; i < NBASE; i++) add(4, Math.sqrt(Math.random()), Math.random() * Math.PI * 2);   // stem base
+  for (i = 0; i < NVEIL; i++) add(2, Math.sqrt(Math.random()), Math.random() * Math.PI * 2);
+  for (k = 0; k < NG; k++) for (i = 0; i < NGP; i++) {
+    GI[n] = k % 2; add(3, (i + Math.random()) / NGP, (k + (Math.random() - 0.5) * 0.25) / NG * Math.PI * 2);
+  }
+
+  // Colors (RGB)
+  var CAP = [206, 196, 182], STEM = [200, 190, 175],
+      VEIL = [210, 180, 160], RING = [212, 192, 174], PINK = [200, 145, 135], BROWN = [78, 50, 38];
+
+  // Canvas buffers
+  var W, dpr, img, data, zbuf, ps;
+  function resize() {
+    dpr = window.devicePixelRatio || 1;
+    W = Math.round(canvas.clientWidth * dpr);
+    canvas.width = W; canvas.height = W;
+    img = ctx.createImageData(W, W); data = img.data; zbuf = new Float32Array(W * W);
+    ps = Math.max(1, Math.round(dpr));
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // View + interaction
+  var yaw = 0.6, pitch = 0.22, spin = 0.006, dragging = false, lastX = 0, lastY = 0, idle = 0;
+  canvas.addEventListener('pointerdown', function (e) {
+    dragging = true; canvas.classList.add('dragging'); canvas.setPointerCapture(e.pointerId);
+    lastX = e.clientX; lastY = e.clientY; spin = 0;
+  });
+  canvas.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    var dx = e.clientX - lastX, dy = e.clientY - lastY;
+    yaw += dx * 0.01; pitch = clamp(pitch + dy * 0.01, -1.3, 1.3);
+    spin = dx * 0.002; lastX = e.clientX; lastY = e.clientY; idle = 0;
+  });
+  function release() { dragging = false; canvas.classList.remove('dragging'); }
+  canvas.addEventListener('pointerup', release);
+  canvas.addEventListener('pointercancel', release);
+
+  // Timeline: grow 12 s, hold 3 s, back to immature 1.5 s
+  var GROW = 12, HOLD = 3, BACK = 1.5, CYCLE = GROW + HOLD + BACK;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function growth(sec) {
+    if (reduce) return 0.66;
+    var t = sec % CYCLE;
+    if (t < GROW) return t / GROW;
+    if (t < GROW + HOLD) return 1;
+    var u = (t - GROW - HOLD) / BACK; return 1 - u * u * (3 - 2 * u);
+  }
+  function stageName(g) { return g < 0.2 ? 'immature' : g < 0.5 ? 'approaching maturity' : g < 0.83 ? 'mature' : 'veil open'; }
+
+  var L = [-0.45, 0.6, 0.66], Ln = Math.hypot(L[0], L[1], L[2]); L = [L[0] / Ln, L[1] / Ln, L[2] / Ln];
+  var PIVOT = 0.22, start = performance.now(), lastStage = '';
+
+  function render(g) {
+    var R = key('R', g), tm = key('tm', g), ys = key('ys', g), sl = key('sl', g), sr = key('sr', g),
+        veil = key('veil', g), gd = key('gill', g), ring = key('ring', g);
+    var rimY = -1 + sl, c = rimY - ys * R * Math.cos(tm), rimR = R * Math.sin(tm);
+    var ta = Math.min(tm, 1.72) - 0.06, gOutR = R * Math.sin(ta) * 0.97, gOutY = c + ys * R * Math.cos(ta) + 0.01,
+        gInY = rimY + 0.1 * ys * R;
+    var gillCol = [lerp(PINK[0], BROWN[0], gd), lerp(PINK[1], BROWN[1], gd), lerp(PINK[2], BROWN[2], gd)];
+
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var S = W * 0.34, half = W / 2;
+    data.fill(0); zbuf.fill(-1e9);
+
+    for (var i = 0; i < N; i++) {
+      var p = part[i], a = A[i], b = B[i], cb = Math.cos(b), sb = Math.sin(b);
+      var x, y, z, nx, ny, nz, base, under = false;
+
+      if (p === 0) {                                   // cap
+        var ct = 1 - a * (1 - Math.cos(tm)), st = Math.sqrt(Math.max(0, 1 - ct * ct));
+        x = R * st * cb; z = R * st * sb; y = c + ys * R * ct;
+        nx = st * cb; ny = ct / ys; nz = st * sb; base = CAP;
+      } else if (p === 1) {                            // stem with slight bulb at base
+        var r1 = sr * (1 + 0.25 * (1 - a) * (1 - a));
+        x = r1 * cb; z = r1 * sb; y = -1 + a * (sl + 0.04);
+        nx = cb; ny = 0; nz = sb; base = STEM;
+      } else if (p === 4) {                            // stem base (closes the bottom)
+        var br = a * sr * 1.25;
+        x = br * cb; z = br * sb; y = -1;
+        nx = 0; ny = -1; nz = 0; under = true; base = STEM;
+      } else if (p === 2) {                            // veil, tears and collapses into a ring
+        var vr = lerp(sr, rimR * 0.98, a), vy = rimY - 0.02 * Math.sin(Math.PI * a);
+        if (RV[i] <= veil) {
+          x = vr * cb; z = vr * sb; y = vy; base = VEIL;
+        } else {
+          if (ring < 0.03) continue;
+          var rr = sr + 0.015 + 0.06 * a, ry = rimY - 0.05 - 0.17 * a;
+          x = lerp(vr, rr, ring) * cb; z = lerp(vr, rr, ring) * sb; y = lerp(vy, ry, ring); base = RING;
+        }
+        nx = 0; ny = -1; nz = 0; under = true;
+      } else {                                         // gills, revealed as the veil tears
+        if (RV[i] <= veil) continue;
+        var gr = lerp(sr, gOutR, a);
+        x = gr * cb; z = gr * sb; y = lerp(gInY, gOutY, a);
+        nx = 0; ny = -1; nz = 0; under = true; base = gillCol;
+      }
+      x += JX[i]; y += JY[i] + PIVOT; z += JZ[i];
+
+      // Rotate (yaw then pitch)
+      var X = x * cy - z * sy, Z = x * sy + z * cy, Y = y * cp - Z * sp; Z = y * sp + Z * cp;
+      var NX = nx * cy - nz * sy, NZ = nx * sy + nz * cy, NY = ny * cp - NZ * sp; NZ = ny * sp + NZ * cp;
+      var nl = Math.hypot(NX, NY, NZ) || 1, dot = (NX * L[0] + NY * L[1] + NZ * L[2]) / nl;
+      var shade = under ? 0.55 + 0.4 * Math.abs(dot) : 0.22 + 0.8 * Math.max(0, dot);
+      shade = clamp(shade, 0, 1.02);
+      var m = 0.38 + 0.62 * shade, tint = 1 - shade;   // darker, slightly lavender shadows
+
+      var f = 3.2 / (3.2 - Z), px = half + X * f * S, py = half - Y * f * S;
+
+      var ix = Math.round(px), iy = Math.round(py);
+      if (ix < 0 || iy < 0 || ix > W - ps || iy > W - ps) continue;
+
+      // Black points: shadowed and underside areas darkest, lit areas a soft dark grey
+      var v = (p === 3 ? 10 : 25 + 75 * shade) + CV[i] * 0.5;
+      var rC = clamp(v, 0, 255), gC = rC, bC = rC,
+          aC = Math.round(255 * clamp(0.7 + 0.25 * Z, 0.4, 1));
+
+      for (var oy = 0; oy < ps; oy++) for (var ox = 0; ox < ps; ox++) {
+        var idx = (iy + oy) * W + ix + ox;
+        if (Z <= zbuf[idx]) continue;
+        zbuf[idx] = Z;
+        var o = idx * 4; data[o] = rC; data[o + 1] = gC; data[o + 2] = bC; data[o + 3] = aC;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+
+  function frame(now) {
+    var g = growth((now - start) / 1000), name = stageName(g);
+    if (name !== lastStage) { stageEl.textContent = name; lastStage = name; }
+    if (!dragging) {
+      idle++;
+      spin += ((reduce ? 0 : 0.006) - spin) * (idle > 60 ? 0.03 : 0.01);
+      yaw += spin;
+    }
+    render(g);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+<script>
+// HRM story in points: strawberry -> DNA double helix -> helix melts -> melting-peak curves by genotype group.
+// Drag to turn/tilt at any stage.
+(function () {
+  var canvas = document.getElementById('strawberry');
+  var stageEl = document.getElementById('hrmStage');
+  if (!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  function clamp(x, a, b) { return x < a ? a : x > b ? b : x; }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function smooth(t) { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); }
+
+  // ---------- Shape 1: strawberry ----------
+  var YB = -1, YT = 0.55, RMAX = 0.78;
+  function radius(y) {
+    var u = clamp((y - YB) / (YT - YB), 0, 1);
+    return RMAX * Math.pow(Math.max(0, Math.sin(Math.PI * Math.pow(u, 1.8))), 0.55);
+  }
+  var P = [];   // [x, y, z, nx, ny, nz, type]  type: 0 body, 1 seed, 2 calyx
+  var c0 = 0;
+  while (c0 < 7000) {
+    var y = YB + Math.random() * (YT - YB), r = radius(y);
+    if (Math.random() * RMAX > r) continue;
+    var a = Math.random() * Math.PI * 2, dr = (radius(y + 0.01) - radius(y - 0.01)) / 0.02;
+    P.push([r * Math.cos(a), y, r * Math.sin(a), Math.cos(a), -dr, Math.sin(a), 0]); c0++;
+  }
+  var rows = 13;
+  for (var row = 0; row < rows; row++) {
+    var sy = YB + 0.12 + (row / (rows - 1)) * (YT - YB - 0.3), sr = radius(sy);
+    var nSeeds = Math.max(3, Math.round(sr * 22));
+    for (var s = 0; s < nSeeds; s++) {
+      var sa = (s + (row % 2) * 0.5) / nSeeds * Math.PI * 2;
+      for (var q = 0; q < 14; q++) {
+        var jy = sy + (Math.random() - 0.5) * 0.045, ja = sa + (Math.random() - 0.5) * 0.03 / Math.max(sr, 0.1);
+        var jr = radius(jy) * 0.985;
+        P.push([jr * Math.cos(ja), jy, jr * Math.sin(ja), Math.cos(ja), 0, Math.sin(ja), 1]);
+      }
+    }
+  }
+  var yPeak = YB + (YT - YB) * Math.pow(0.5, 1 / 1.8);
+  function surfaceY(d) {
+    var lo = yPeak, hi = YT;
+    for (var it = 0; it < 30; it++) { var mid = (lo + hi) / 2; if (radius(mid) > d) lo = mid; else hi = mid; }
+    return lo;
+  }
+  for (var k = 0; k < 8; k++) {
+    var ka = k / 8 * Math.PI * 2 + 0.2, len = 0.5 + 0.12 * ((k * 37) % 5) / 5;
+    for (var p = 0; p < 420; p++) {
+      var t = Math.random(), hw = 0.11 * Math.sin(Math.PI * Math.pow(t, 0.6));
+      var d = 0.04 + t * len, ang = ka + (Math.random() - 0.5) * 2 * hw / Math.max(d, 0.06);
+      var yy = (d < RMAX * 0.98 ? surfaceY(d) : yPeak - (d - RMAX) * 0.8) + 0.035 + 0.04 * (1 - t);
+      P.push([d * Math.cos(ang), yy, d * Math.sin(ang), 0, 1, 0, 2]);
+    }
+  }
+  for (var m = 0; m < 300; m++) {
+    var h = Math.random(), ma = Math.random() * Math.PI * 2, mr = 0.055 * (1 - 0.3 * h);
+    P.push([mr * Math.cos(ma) + 0.05 * h * h, YT + h * 0.28, mr * Math.sin(ma), Math.cos(ma), 0, Math.sin(ma), 2]);
+  }
+  // Shuffle so each region of the strawberry spreads across the helix and curves
+  for (var i = P.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), tmp = P[i]; P[i] = P[j]; P[j] = tmp; }
+  var N = P.length;
+
+  // ---------- Per-point roles in the helix and curve shapes ----------
+  var HR = new Uint8Array(N), HS = new Float32Array(N), HF = new Float32Array(N), HJ = new Float32Array(N * 3);
+  var CX = new Float32Array(N), CY = new Float32Array(N), CG = new Int8Array(N);
+  var DLY = new Float32Array(N), ARC = new Float32Array(N * 3), CV = new Float32Array(N);
+  var RUNGS = 24, TURNS = 2.2;
+
+  // Melting-peak curves (-dF/dT vs temperature, 55-94 C), shaped after the lab's HRM data:
+  // group 1 one peak near 78.7 C, group 2 one peak near 80.2 C, group 3 several peaks (75.5, 79, 80.3 C)
+  function gauss(T, mu, sd) { var d = (T - mu) / sd; return Math.exp(-0.5 * d * d); }
+  function baseline(T) {
+    return 0.03 + 0.085 / (1 + Math.exp((T - 80.6) / 0.5))       // background that drops after melting
+         + 0.06 * gauss(T, 56.6, 1.3)                             // small early bump
+         - 0.02 * gauss(T, 69, 3.5);                               // slight dip mid-range
+  }
+  function peaks(g, T, sh, k) {
+    if (g === 0) return k * gauss(T, 78.7 + sh, 0.62);
+    if (g === 1) return 0.9 * k * gauss(T, 80.2 + sh, 0.66);
+    return k * (0.24 * gauss(T, 75.5 + sh, 0.55) + 0.39 * gauss(T, 78.9 + sh, 0.5) + 0.44 * gauss(T, 80.3 + sh, 0.48));
+  }
+  var CURVES = 12, POLY = [];
+  for (var c = 0; c < CURVES; c++) {
+    // Each replicate gets a small shift and height change; points are spread evenly along the line
+    var g0 = c % 3, sh = (Math.random() - 0.5) * 0.3, kk = 1 + (Math.random() - 0.5) * 0.16;
+    var xs = [], ys = [], cum = [0];
+    for (var q2 = 0; q2 <= 600; q2++) {
+      var TT = 55 + 39 * q2 / 600;
+      xs.push(-0.95 + 1.95 * q2 / 600);
+      ys.push(-0.7 + 1.45 * (baseline(TT) + peaks(g0, TT, sh, kk)));
+      if (q2) cum.push(cum[q2 - 1] + Math.hypot(xs[q2] - xs[q2 - 1], ys[q2] - ys[q2 - 1]));
+    }
+    POLY.push({ g: g0, xs: xs, ys: ys, cum: cum, len: cum[600] });
+  }
+  function onCurve(pl, out) {
+    var target = Math.random() * pl.len, lo = 0, hi = 600;
+    while (hi - lo > 1) { var mid = (lo + hi) >> 1; if (pl.cum[mid] < target) lo = mid; else hi = mid; }
+    var t = (target - pl.cum[lo]) / ((pl.cum[hi] - pl.cum[lo]) || 1);
+    out[0] = lerp(pl.xs[lo], pl.xs[hi], t); out[1] = lerp(pl.ys[lo], pl.ys[hi], t);
+  }
+  var CP = [0, 0];
+
+  for (i = 0; i < N; i++) {
+    var f = i / N;
+    // Helix role: 0 strand A, 1 strand B, 2 base-pair rung
+    if (f < 0.38) { HR[i] = 0; HS[i] = Math.random(); }
+    else if (f < 0.76) { HR[i] = 1; HS[i] = Math.random(); }
+    else { HR[i] = 2; HS[i] = (Math.floor(Math.random() * RUNGS) + 0.5) / RUNGS; HF[i] = Math.random(); }
+    HJ[i * 3] = (Math.random() - 0.5) * 0.05; HJ[i * 3 + 1] = (Math.random() - 0.5) * 0.05; HJ[i * 3 + 2] = (Math.random() - 0.5) * 0.05;
+
+    // Curve role: 90% on curves, 10% on the axes
+    var u = Math.random();
+    if (Math.random() < 0.9) {
+      var pl = POLY[i % CURVES];
+      onCurve(pl, CP);
+      CG[i] = pl.g; CX[i] = CP[0]; CY[i] = CP[1] + (Math.random() - 0.5) * 0.01;
+    } else if (Math.random() < 0.55) { CG[i] = -1; CX[i] = -1.0 + 2.05 * u; CY[i] = -0.8; }
+    else { CG[i] = -1; CX[i] = -1.0; CY[i] = -0.8 + 1.6 * u; }
+
+    DLY[i] = Math.random() * 0.35;
+    ARC[i * 3] = (Math.random() - 0.5) * 0.35; ARC[i * 3 + 1] = (Math.random() - 0.5) * 0.35; ARC[i * 3 + 2] = (Math.random() - 0.5) * 0.35;
+    CV[i] = (Math.random() - 0.5) * 16;
+  }
+
+  function strandPos(s, which, mlt, out) {
+    var th = s * Math.PI * 2 * TURNS + (which ? Math.PI : 0);
+    var rr = 0.3 * (1 + 0.75 * mlt), drift = (which ? 1 : -1) * 0.1 * mlt;
+    out[0] = rr * Math.cos(th) + drift; out[1] = -0.95 + 1.9 * s; out[2] = rr * Math.sin(th);
+  }
+  var A = [0, 0, 0], B = [0, 0, 0];
+  function helixPos(i, mlt, out) {
+    if (HR[i] < 2) strandPos(HS[i], HR[i], mlt, out);
+    else {
+      strandPos(HS[i], 0, mlt, A); strandPos(HS[i], 1, mlt, B);
+      var hf = HF[i], ff = hf < 0.5 ? hf * (1 - mlt) : 1 - (1 - hf) * (1 - mlt);  // rungs break and fold back onto strands
+      out[0] = lerp(A[0], B[0], ff); out[1] = lerp(A[1], B[1], ff); out[2] = lerp(A[2], B[2], ff);
+    }
+    out[0] += HJ[i * 3]; out[1] += HJ[i * 3 + 1]; out[2] += HJ[i * 3 + 2];
+  }
+
+  // ---------- Timeline ----------
+  // 0 strawberry | 1 -> helix | 2 helix | 3 melting | 4 -> curves | 5 curves | 6 -> strawberry
+  var SEG = [4, 2.5, 2, 2.5, 2.5, 5, 2.5], CYCLE = SEG.reduce(function (x, y) { return x + y; }, 0);
+  var NAMES = ['strawberry', 'DNA extracted', 'DNA extracted', 'heating: DNA strands separate', 'melting peaks by genotype group', 'melting peaks by genotype group', 'strawberry'];
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function phase(sec) {
+    if (reduce) return { seg: 5, t: 0 };
+    var x = sec % CYCLE;
+    for (var s = 0; s < SEG.length; s++) { if (x < SEG[s]) return { seg: s, t: x / SEG[s] }; x -= SEG[s]; }
+    return { seg: 0, t: 0 };
+  }
+
+  // ---------- Canvas + interaction ----------
+  var W, dpr, img, data, zbuf, ps;
+  function resize() {
+    dpr = window.devicePixelRatio || 1;
+    W = Math.round(canvas.clientWidth * dpr);
+    canvas.width = W; canvas.height = W;
+    img = ctx.createImageData(W, W); data = img.data; zbuf = new Float32Array(W * W);
+    ps = Math.max(1, Math.round(dpr));
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var yaw = 0.3, pitch = 0.18, spin = 0.005, dragging = false, lastX = 0, lastY = 0, idle = 0;
+  canvas.addEventListener('pointerdown', function (e) {
+    dragging = true; canvas.classList.add('dragging'); canvas.setPointerCapture(e.pointerId);
+    lastX = e.clientX; lastY = e.clientY; spin = 0;
+  });
+  canvas.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    var dx = e.clientX - lastX, dy = e.clientY - lastY;
+    yaw += dx * 0.01; pitch = clamp(pitch + dy * 0.01, -1.3, 1.3);
+    spin = dx * 0.002; lastX = e.clientX; lastY = e.clientY; idle = 0;
+  });
+  function release() { dragging = false; canvas.classList.remove('dragging'); }
+  canvas.addEventListener('pointerup', release);
+  canvas.addEventListener('pointercancel', release);
+
+  var L = [-0.45, 0.6, 0.66], Ln = Math.hypot(L[0], L[1], L[2]); L = [L[0] / Ln, L[1] / Ln, L[2] / Ln];
+  var GCOL = [[205, 55, 55], [45, 110, 200], [40, 155, 75]];   // group colors: red, blue, green (as in the HRM software)
+  var Q = [0, 0, 0], H = [0, 0, 0];
+
+  function render(ph) {
+    var seg = ph.seg, t = ph.t;
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var S = W * 0.34, half = W / 2, curveW = 0;
+    data.fill(0); zbuf.fill(-1e9);
+
+    for (var i = 0; i < N; i++) {
+      var p = P[i], sx = p[0], sy0 = p[1] + 0.12, sz = p[2];
+      var from, to, tt, x, y, z;
+      var lt = clamp((t - DLY[i]) / 0.65, 0, 1), e = smooth(lt);
+
+      // Which two shapes, and how far between them
+      var wStraw = 0, wCurve = 0;
+      if (seg === 0) { x = sx; y = sy0; z = sz; wStraw = 1; }
+      else if (seg === 1 || seg === 2 || seg === 3) {
+        helixPos(i, seg === 3 ? smooth(t) : 0, H);
+        if (seg === 1) {
+          x = lerp(sx, H[0], e); y = lerp(sy0, H[1], e); z = lerp(sz, H[2], e); wStraw = 1 - e;
+        } else { x = H[0]; y = H[1]; z = H[2]; }
+      } else if (seg === 4) {
+        helixPos(i, 1, H);
+        x = lerp(H[0], CX[i], e); y = lerp(H[1], CY[i], e); z = lerp(H[2], 0, e); wCurve = e;
+      } else if (seg === 5) { x = CX[i]; y = CY[i]; z = 0; wCurve = 1; }
+      else { x = lerp(CX[i], sx, e); y = lerp(CY[i], sy0, e); z = lerp(0, sz, e); wCurve = 1 - e; wStraw = e; }
+      if (seg === 1 || seg === 4 || seg === 6) {        // swirl a little while rearranging
+        var arc = Math.sin(Math.PI * e);
+        x += ARC[i * 3] * arc; y += ARC[i * 3 + 1] * arc; z += ARC[i * 3 + 2] * arc;
+      }
+      curveW = Math.max(curveW, wCurve);
+
+      // Rotate
+      var Xr = x * cy - z * sy, Zr = x * sy + z * cy, Yr = y * cp - Zr * sp; Zr = y * sp + Zr * cp;
+
+      // Shade: strawberry uses lighting; helix and curves are flat
+      var vStraw = 0;
+      if (wStraw > 0) {
+        var nx = p[3], ny = p[4], nz = p[5];
+        var nX = nx * cy - nz * sy, nZ = nx * sy + nz * cy, nY = ny * cp - nZ * sp; nZ = ny * sp + nZ * cp;
+        var dot = (nX * L[0] + nY * L[1] + nZ * L[2]) / (Math.hypot(nX, nY, nZ) || 1);
+        var shade = p[6] === 2 ? 0.5 + 0.45 * Math.abs(dot) : clamp(0.22 + 0.8 * Math.max(0, dot), 0, 1.02);
+        vStraw = p[6] === 1 ? 0 : p[6] === 2 ? 10 + 35 * shade : 70 + 110 * shade;
+      }
+      var vHelix = HR[i] === 2 ? 110 : 30;
+      var base = lerp(vHelix, vStraw, wStraw) + CV[i] * 0.5;
+      var rC = base, gC = base, bC = base;
+      if (wCurve > 0) {
+        var col = CG[i] < 0 ? [120, 120, 120] : GCOL[CG[i]];
+        rC = lerp(base, col[0], wCurve); gC = lerp(base, col[1], wCurve); bC = lerp(base, col[2], wCurve);
+      }
+
+      var f = 3.2 / (3.2 - Zr), ix = Math.round(half + Xr * f * S), iy = Math.round(half - Yr * f * S);
+      if (ix < 0 || iy < 0 || ix > W - ps || iy > W - ps) continue;
+      var zz = Zr + (wStraw > 0.5 && p[6] === 1 ? 0.03 : wStraw > 0.5 && p[6] === 2 ? 0.02 : 0);
+      var aC = Math.round(255 * clamp(0.75 + 0.25 * Zr, 0.4, 1));
+      rC = clamp(rC, 0, 255); gC = clamp(gC, 0, 255); bC = clamp(bC, 0, 255);
+      for (var oy = 0; oy < ps; oy++) for (var ox = 0; ox < ps; ox++) {
+        var idx = (iy + oy) * W + ix + ox;
+        if (zz <= zbuf[idx]) continue;
+        zbuf[idx] = zz;
+        var o = idx * 4; data[o] = rC; data[o + 1] = gC; data[o + 2] = bC; data[o + 3] = aC;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+
+    // Axis labels and legend fade in with the curves (only when facing roughly front-on)
+    var facing = clamp(Math.cos(yaw) * Math.cos(pitch), 0, 1);
+    var labelA = smooth((curveW - 0.6) / 0.4) * smooth((facing - 0.85) / 0.15);
+    if (labelA > 0.01) {
+      ctx.save(); ctx.globalAlpha = labelA;
+      ctx.font = Math.round(11 * dpr) + 'px "IBM Plex Sans", Arial, sans-serif';
+      ctx.fillStyle = '#6b6858'; ctx.textAlign = 'center';
+      ctx.fillText('Temperature (\u00B0C)', half, half + 0.95 * S);
+      ctx.save(); ctx.translate(half - 1.12 * S, half); ctx.rotate(-Math.PI / 2); ctx.fillText('\u2212dF/dT', 0, 0); ctx.restore();
+      var names = ['Group 1', 'Group 2', 'Group 3'];
+      ctx.textAlign = 'left';
+      for (var g = 0; g < 3; g++) {
+        var lx = half + 0.35 * S, ly = half - 0.82 * S + g * 15 * dpr;
+        ctx.fillStyle = 'rgb(' + GCOL[g].join(',') + ')';
+        ctx.fillRect(lx, ly - 7 * dpr, 12 * dpr, 3 * dpr);
+        ctx.fillText(names[g], lx + 17 * dpr, ly);
+      }
+      ctx.restore();
+    }
+  }
+
+  var start = performance.now(), lastName = '';
+  function frame(now) {
+    var ph = phase((now - start) / 1000);
+    var name = NAMES[ph.seg];
+    if (name !== lastName && stageEl) { stageEl.textContent = name; lastName = name; }
+    if (!dragging) {
+      idle++;
+      if (ph.seg === 4 || ph.seg === 5) {
+        // Turn to face the viewer so the curves can be read
+        var target = Math.round(yaw / (Math.PI * 2)) * Math.PI * 2;
+        yaw += (target - yaw) * 0.06; pitch += (0 - pitch) * 0.06; spin = 0;
+      } else {
+        if (ph.seg === 0 && ph.t < 0.05) pitch += (0.18 - pitch) * 0.1;
+        spin += ((reduce ? 0 : 0.005) - spin) * (idle > 60 ? 0.03 : 0.01);
+        yaw += spin;
+      }
+    }
+    render(ph);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
